@@ -1,4 +1,5 @@
 plugins {
+    // JAVA와 Spring Boot 플러그인 선언
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
@@ -9,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
+    // JAVA 21 버전 사용
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
@@ -20,19 +22,41 @@ configurations {
 	}
 }
 
+// 1. repositories란?
+// Gradle이 라이브러리(의존성) 를 다운로드할 저장소(Repository) 목록을 지정하는 구역입니다.
+// 즉,
+// dependencies { ... } 블록에서 선언한 패키지를
+// 어디서 찾아서 가져올지 경로를 알려주는 설정이에요.
+//
+// 이렇게 쓰면 Gradle이 Maven Central Repository라는
+// 전 세계 개발자들이 공유하는 공식 자바 라이브러리 저장소에서 패키지를 다운로드합니다.
+// 결국 node.js의 npm 같은거
 repositories {
+    // 의존성을 받을 표준 원격 중앙 저장소
 	mavenCentral()
 }
 
 dependencies {
+    // 웹 어플리케이션 (Spring MVC)
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+    // 유효성 검증 (Validation API)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // JPA + Hibernate (DB 접근)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
+    // 테스트 라이브러리
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 인 메모리 DB
+    runtimeOnly 'com.h2database:h2'
+
+    // Swagger/OpenAPI (springdoc)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+	useJUnitPlatform() // JUnit 5 플랫폼 사용
 }
