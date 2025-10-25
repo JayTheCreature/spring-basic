@@ -33,8 +33,8 @@ public class PostController {
     @Operation(summary = "게시물 조회", description = "id로 게시물 조회 GET")
     @GetMapping("/{id}")
     public ApiResponse<PostResponse> get(@PathVariable Long id) {
-        return ApiResponse.ok(postService.get(id));
-    }
+		return ApiResponse.ok(postService.get(id));
+	}
 
     @Operation(summary = "게시판 리스트 조회")
     @GetMapping
@@ -42,10 +42,26 @@ public class PostController {
         return ApiResponse.ok(postService.list());
     }
 
+    @Operation(summary = "게시판 리스트 조회 with 카운트")
+    @GetMapping("/list")
+    public ApiResponse<PostListResponse> listWithCount(
+            // 요청 파라미터는 인자로 정의한다 eg. /api/posts?keyword=%검색어% 형태 사용
+            // 검색어
+            @RequestParam(name = "keyword", required = false) String keyword
+    ) {
+        return ApiResponse.ok(postService.listWithCount(keyword));
+    }
+
+    /**
+     * 게시물 수정 api
+     * @param id update 대상 게시물 id
+     * @param updateRequestBody 클라이언트에서 보내는 json body가 들어옴 @valid도 수행 한다.
+     * @return 처리 결과
+     */
     @Operation(summary = "게시글 수정")
     @PostMapping("/{id}")
-    public ApiResponse<PostResponse> update(@PathVariable Long id, @Valid @RequestBody PostUpdateRequest req) {
-        return ApiResponse.ok(postService.update(id, req));
+    public ApiResponse<PostResponse> update(@PathVariable Long id, @Valid @RequestBody PostUpdateRequest updateRequestBody) {
+        return ApiResponse.ok(postService.update(id, updateRequestBody));
     }
 
     @Operation(summary = "게시글 삭제")
