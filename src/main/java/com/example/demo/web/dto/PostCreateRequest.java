@@ -1,7 +1,7 @@
 package com.example.demo.web.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank; // null, "", " " 모두 금지
+import jakarta.validation.constraints.Size; // 최대, 최소 입력값 체크
 
 public class PostCreateRequest {
 

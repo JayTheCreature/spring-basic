@@ -8,6 +8,9 @@ import jakarta.persistence.*; // JPA (Java Persistence API) 에서 엔티티(Ent
 public class Post extends BaseTime {
     // extends 는 상속 받을 클래스를 의미하고 상속 받은 클래스의 모든 요소를 Post 클래스에서 사용 할 수 있게 한다.
 
+	/**
+	 * posts 테이블에서 사용 될 column들 정의
+	 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // id
@@ -21,17 +24,20 @@ public class Post extends BaseTime {
     @Column(nullable = false, length = 50)
     private String author; // 작성자
 
-    // JPA에서 기본 생성자는 protected로 두는 것을 권장
+	/**
+	 * JPA에서는 기본 클래스 생성자(constructor)를 protected와 public 둘 다 생성해야 함
+	 */
     protected Post() { }
-
-    // 생성자
     public Post(String title, String content, String author) {
         this.title = title;
         this.content = content;
         this.author = author;
     }
 
-    // 게시글 수정 메서드
+	/**
+	 * Methods
+	 * - create
+	 */
     public void update(String title, String content) {
         // 수정 된 데이터만 반영
         if (title != null) this.title = title;

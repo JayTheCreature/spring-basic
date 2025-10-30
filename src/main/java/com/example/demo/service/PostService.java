@@ -2,10 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Post;
 import com.example.demo.repository.PostRepository;
-import com.example.demo.web.dto.PostResponse;
-import com.example.demo.web.dto.PostCreateRequest;
-import com.example.demo.web.dto.PostUpdateRequest;
-import com.example.demo.web.dto.PostListResponse;
+import com.example.demo.web.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +32,37 @@ public class PostService {
         return new PostResponse(saved);
     }
 
+	/**
+	 * 게시글 배치 등록
+	 * - 컨트롤러에서 전달된 여러 PostCreateRequest를 Post 엔티티로 변환하여 saveAll(of JpaRepository)로 일괄 저장
+	 */
+	@Transactional
+	public PostBulkCreateResponse bulkCreate(PostBulkCreateRequest req) {
+		System.out.println("req: " + req);
+		if (req == null || req.getPosts() == null ||  req.getPosts().isEmpty()) {
+			throw new IllegalArgumentException("요청의 posts가 빈 배열입니다.");
+		}
+
+		if (req.getPosts().size() > 1000) {
+			throw new IllegalArgumentException("1000개 이하의 요청만 가능합니다.");
+		}
+
+		List<PostCreateRequest> items = req.getPosts();
+
+		// 요청 된 JSON 데이터를 JpaRepository에 요청할 데이터로 변환해서 Post Entity타입으로 보관
+		List<Post> posts = items.stream()
+				.map(post -> new Post(post.getTitle(), post.getContent(), post.getAuthor()))
+				.toList();
+
+		List<Post> saved = postRepository.saveAll(posts);
+
+		List<PostResponse> createdDtos = saved.stream()
+				.map(PostResponse::new) // 엔티티를 응답 DTO로 변환
+				.toList();
+
+		return new PostBulkCreateResponse(createdDtos);
+	}
+
     // 단건 조회
     public PostResponse get(Long id) {
         Post found = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found: " + id));
@@ -63,14 +91,15 @@ public class PostService {
 
             return new PostListResponse(posts, totalCount);
         } else {
+
             // 검색어 있을 때
-            List<PostResponse> posts = postRepository.findByTitle(keyword)
+            List<PostResponse> posts = postRepository.findByTitleContaining(keyword)
                     .stream()
                     .map(PostResponse::new)
                     .toList();
 
             // 게시물 카운트
-            long totalCount = postRepository.count();
+            long totalCount = postRepository.countByTitleContaining(keyword);
 
             return new PostListResponse(posts, totalCount);
         }
@@ -93,4 +122,6 @@ public class PostService {
 
         postRepository.delete(found);
     }
+
+
 }

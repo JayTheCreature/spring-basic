@@ -17,8 +17,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // Methods
     // 여기에 정의하면 PostRepository를 참조하는 곳(서비스)에서 메서드 형태로 사용 가능한 것 같다.
     // 제목 검색
-    List<Post> findByTitle(String keyword);
+    List<Post> findByTitleContaining(String keyword);
 
     // 검색 결과 갯수
-    long countByTitle(String keyword);
+    long countByTitleContaining(String keyword);
 }

@@ -1,3 +1,6 @@
+/**
+ * REST API Response Body 공통 처리 클래스
+ */
 package com.example.demo.common;
 
 public class ApiResponse<T> {
@@ -13,11 +16,12 @@ public class ApiResponse<T> {
         this.message = message;
     }
 
-    // 성공 응답 팩토리 메서드
+    // 성공 응답 공통
     public static <T> ApiResponse<T> ok(T data) {
         return new ApiResponse<>(true, data, null);
     }
 
+	// 에러 공통
     public static <T> ApiResponse<T> error(String message) {
         return new ApiResponse<>(false, null, message);
     }
